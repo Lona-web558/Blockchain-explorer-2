@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blockchain Explorer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .custom-card {
+            transition: all 0.3s;
+        }
+        .custom-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">Blockchain Explorer</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSection('home')">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSection('blocks')">Blocks</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSection('transactions')">Transactions</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div id="home" class="section">
+            <h2>Welcome to Blockchain Explorer</h2>
+            <div class="row mt-4">
+                <div class="col-md-4">
+                    <div class="card custom-card">
+                        <div class="card-body">
+                            <h5 class="card-title">Latest Block</h5>
+                            <p class="card-text" id="latestBlock">Loading...</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card custom-card">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Transactions</h5>
+                            <p class="card-text" id="totalTransactions">Loading...</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card custom-card">
+                        <div class="card-body">
+                            <h5 class="card-title">Network Hash Rate</h5>
+                            <p class="card-text" id="hashRate">Loading...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="blocks" class="section" style="display:none;">
+            <h2>Latest Blocks</h2>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Block Height</th>
+                        <th>Timestamp</th>
+                        <th>Transactions</th>
+                        <th>Size</th>
+                    </tr>
+                </thead>
+                <tbody id="blocksTableBody">
+                </tbody>
+            </table>
+        </div>
+
+        <div id="transactions" class="section" style="display:none;">
+            <h2>Latest Transactions</h2>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Transaction Hash</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody id="transactionsTableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Simulated blockchain data
+        const blockchainData = {
+            latestBlock: 12345678,
+            totalTransactions: 987654321,
+            hashRate: "150 EH/s",
+            blocks: [
+                { height: 12345678, timestamp: "2023-04-01 12:34:56", transactions: 2500, size: "1.2 MB" },
+                { height: 12345677, timestamp: "2023-04-01 12:33:42", transactions: 2300, size: "1.1 MB" },
+                { height: 12345676, timestamp: "2023-04-01 12:32:28", transactions: 2700, size: "1.3 MB" },
+            ],
+            transactions: [
+                { hash: "0x1234...5678", from: "0xabcd...efgh", to: "0xijkl...mnop", amount: "1.5 ETH" },
+                { hash: "0x2345...6789", from: "0xqrst...uvwx", to: "0xyzab...cdef", amount: "0.5 ETH" },
+                { hash: "0x3456...7890", from: "0xghij...klmn", to: "0xopqr...stuv", amount: "2.0 ETH" },
+            ]
+        };
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.style.display = 'none';
+            });
+            document.getElementById(sectionId).style.display = 'block';
+        }
+
+        function updateHomeData() {
+            document.getElementById('latestBlock').textContent = blockchainData.latestBlock;
+            document.getElementById('totalTransactions').textContent = blockchainData.totalTransactions;
+            document.getElementById('hashRate').textContent = blockchainData.hashRate;
+        }
+
+        function updateBlocksTable() {
+            const tableBody = document.getElementById('blocksTableBody');
+            tableBody.innerHTML = '';
+            blockchainData.blocks.forEach(block => {
+                const row = tableBody.insertRow();
+                row.insertCell(0).textContent = block.height;
+                row.insertCell(1).textContent = block.timestamp;
+                row.insertCell(2).textContent = block.transactions;
+                row.insertCell(3).textContent = block.size;
+            });
+        }
+
+        function updateTransactionsTable() {
+            const tableBody = document.getElementById('transactionsTableBody');
+            tableBody.innerHTML = '';
+            blockchainData.transactions.forEach(tx => {
+                const row = tableBody.insertRow();
+                row.insertCell(0).textContent = tx.hash;
+                row.insertCell(1).textContent = tx.from;
+                row.insertCell(2).textContent = tx.to;
+                row.insertCell(3).textContent = tx.amount;
+            });
+        }
+
+        // Initialize data
+        updateHomeData();
+        updateBlocksTable();
+        updateTransactionsTable();
+
+        // Simulated real-time updates
+        setInterval(() => {
+            blockchainData.latestBlock++;
+            blockchainData.totalTransactions += Math.floor(Math.random() * 100);
+            updateHomeData();
+        }, 5000);
+    </script>
+</body>
+</html>
